@@ -7,6 +7,7 @@ import '../screens/user_details.dart';
 import '../screens/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import '../providers/userdata_provider.dart';
 
 
 void main() async {
@@ -20,6 +21,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: ((context) => TodoListProvider())),
         ChangeNotifierProvider(create: ((context) => MyAuthProvider())),
+        ChangeNotifierProvider(create: ((context) => userDataProvider())),
       ],
       child: MyApp(),
     ),

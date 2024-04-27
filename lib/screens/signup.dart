@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../models/userdata_model.dart';
+import '../providers/userdata_provider.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -69,7 +71,7 @@ class _SignupPageState extends State<SignupPage> {
           return 'Please enter a password';
         } 
         if(value.length < 6){
-          return 'Please enter a longer password!';
+          return 'Password must be at least 6 characters!';
         }
         return null;
       },
@@ -81,11 +83,19 @@ class _SignupPageState extends State<SignupPage> {
         onPressed: () async {
           if(_formKey.currentState!.validate()){
             _formKey.currentState!.save();  
-          //added
-          await context
-              .read<MyAuthProvider>()
-              .signUp(emailController.text, passwordController.text);
-          if (context.mounted) Navigator.pop(context);
+
+            userData user = userData(
+              null, 
+              firstNameController.text, 
+              lastNameController.text, 
+              emailController.text
+            );
+            context.read<userDataProvider>().addItem(user);
+            //added
+            await context
+                .read<MyAuthProvider>()
+                .signUp(emailController.text, passwordController.text);
+            if (context.mounted) Navigator.pop(context);
           }
         },
         child: const Text('Sign up', style: TextStyle(color: Colors.white)),
