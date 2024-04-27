@@ -21,7 +21,26 @@ class _TodoPageState extends State<TodoPage> {
   Widget build(BuildContext context) {
     // access the list of todos in the provider
     Stream<QuerySnapshot> todosStream = context.watch<TodoListProvider>().todos;
+    Stream<User?> userStream = context.watch<MyAuthProvider>().userStream;
 
+    return StreamBuilder(
+        stream: userStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text("Error encountered! ${snapshot.error}"),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (!snapshot.hasData) {
+            return const LoginPage();
+          }
+
+          // if user is logged in, display the scaffold containing the streambuilder for the todos
+          return displayScaffold(context, todosStream);
+        });
   }
 
   Scaffold displayScaffold(
@@ -41,7 +60,7 @@ class _TodoPageState extends State<TodoPage> {
         ListTile(
           title: const Text('Logout'),
           onTap: () {
-            context.read<AuthProvider>().signOut();
+            context.read<MyAuthProvider>().signOut();
             Navigator.pop(context);
           },
         ),
